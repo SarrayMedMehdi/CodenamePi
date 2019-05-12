@@ -13,7 +13,12 @@ import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
 import com.codename1.ui.TextField;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import tn.esprit.entities.User;
+import tn.esprit.service.ServiceUser;
 
 /**
  *
@@ -28,27 +33,47 @@ public class Login {
     TextField pass;
     Button login,signIn ;
     Home home = new Home();
+    Container center ;
+    ServiceUser sv = new ServiceUser();
+    static User LOGGED_IN_USER ;
+    SignIn sign ;
             
     
     public Login(){
-        f = new Form(BoxLayout.y());
-        
+        f = new Form(new BorderLayout(BorderLayout.CENTER_BEHAVIOR_CENTER_ABSOLUTE));
+        center = new Container(new BoxLayout(BoxLayout.Y_AXIS));
         login = new Button("Login");
         signIn= new Button("Signin"); 
         username= new Label("Username");
         password= new Label("Password");
-        user = new TextField("","User",RIGHT,TextArea.ANY);
-        pass = new TextField("","Passw",RIGHT,TextArea.PASSWORD);
+        user = new TextField("","Userername",RIGHT,TextArea.ANY);
+        pass = new TextField("","Password",RIGHT,TextArea.PASSWORD);
     }
     
     public void Show()
     {
         
-        f.add(username).add(user).add(password).add(pass);
-        f.add(logSign()) ;
-        if(CheckLogin())
+        center.add(username).add(user).add(password).add(pass);
+        center.add(logSign()) ;
+        login.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+               if(CheckLogin(user.getText(),pass.getText()))
             home.Show();
+            }
+        });
+        signIn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                sign = new SignIn();
+                sign.initialise();
+                sign.ShowSignIn();
+            }
+        });
         
+        f.addComponent(BorderLayout.CENTER, center);
         f.show();
     }
     
@@ -61,8 +86,15 @@ public class Login {
         return logsi;
     }
     
-   public boolean CheckLogin(){
-       return false;
+   public boolean CheckLogin(String username,String password){
+        
+      User signedUser = sv.login(username, password);
+      
+        if(signedUser.getLastName() != null ){
+            LOGGED_IN_USER = signedUser ;
+       return true;}
+        
+        return false;
    }
     
 }
