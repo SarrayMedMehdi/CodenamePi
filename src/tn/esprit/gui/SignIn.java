@@ -63,7 +63,13 @@ public class SignIn {
             
             
             content.add(tm.createConstraint().horizontalSpan(2), username);
-         
+         Validator val = new Validator();
+        val.setShowErrorMessageForFocusedComponent(true);
+        val.addConstraint(firstname, 
+                new GroupConstraint(
+                        new LengthConstraint(3), 
+                        new RegexConstraint("^([a-zA-Z ]*)$", "Please only use latin characters for name"))).
+                addSubmitButtons(submit);
             
             email = new TextField("","Email",RIGHT,TextArea.EMAILADDR);
             password = new TextField("","Password",RIGHT,TextArea.PASSWORD);
@@ -71,6 +77,12 @@ public class SignIn {
             content.add(authorization);
            
             content.add(tm.createConstraint().horizontalSpan(2), adresse);
+            val.addConstraint(email, 
+                new GroupConstraint(
+                        new LengthConstraint(5), 
+                        new RegexConstraint("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$", "Please only use a valid email"))).
+                addSubmitButtons(submit);
+            
             FontImage.setMaterialIcon(submit, FontImage.MATERIAL_DONE);
         submit.addActionListener(e -> {
             showOKForm(firstname.getField().getText());
@@ -81,8 +93,8 @@ public class SignIn {
      {
          f.add(CENTER, content);
         f.add(SOUTH, submit);
-
-        
+        lg = new Login();
+        f.getToolbar().setBackCommand("Logout", e -> lg.Show() );
         f.show();
      }
      
@@ -98,7 +110,7 @@ public class SignIn {
          
          Form f = new Form("Thanks", BoxLayout.y());
         f.add(new SpanLabel("Thanks " + fname + " for your submission. You can press the back arrow and login "));
-         lg = new Login();
+        // lg = new Login();
         f.getToolbar().setBackCommand("", e -> lg.Show() );
 
         f.showBack();

@@ -60,16 +60,16 @@ public class ServiceJob {
                 try {
                     job.setCreationDate(inputFormat.parse(obj.get("creationdate").toString()));
                     System.out.println(obj.get("salary").toString());
-                    //job.setExpireDate(inputFormat.parse(obj.get("expiredate").toString()));
+                    job.setExpireDate(inputFormat.parse(obj.get("expiredate").toString()));
                 } catch (ParseException ex) {
                     System.out.println("can't parse shit");
                 }
                 double salary = Double.parseDouble(obj.get("salary").toString());
                 job.setSalary(salary);
                 switch(obj.get("status").toString()){
-                    case "CONFIRMED" : job.setStatus(JobStatus.CONFIRMED);
-                    case "PENDING"   : job.setStatus(JobStatus.PENDING); 
-                    case "DISABLED"  : job.setStatus(JobStatus.DISABLED); 
+                    case "CONFIRMED" : job.setStatus(JobStatus.CONFIRMED);break;
+                    case "PENDING"   : job.setStatus(JobStatus.PENDING);break; 
+                    case "DISABLED"  : job.setStatus(JobStatus.DISABLED);break;
                 }
                   jobz.add(job);
                }

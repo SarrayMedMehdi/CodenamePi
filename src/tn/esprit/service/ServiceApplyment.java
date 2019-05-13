@@ -6,36 +6,35 @@
 package tn.esprit.service;
 
 import com.codename1.io.ConnectionRequest;
-import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
-import com.codename1.ui.events.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
-import tn.esprit.entities.Job;
-import tn.esprit.entities.Rate;
-import tn.esprit.entities.User;
+import tn.esprit.entities.Apply;
+import tn.esprit.entities.Comment;
+import tn.esprit.utils.ApplyToJson;
+import tn.esprit.utils.CommentToJson;
 import tn.esprit.utils.PublicVars;
-import tn.esprit.utils.RateToJson;
 
 /**
  *
  * @author Mehdi Sarray
  */
-public class ServiceRate {
-    String jsonStr = "" ;
-
+public class ServiceApplyment {
     
-      public void pushRate(Rate rate)
+   String jsonStr ="";
+   
+     public void pushApply(Apply apply)
     {
-
-        RateToJson rtj = new RateToJson(rate.getCandidate().getId(), rate.getFeedback(), rate.getNote(), rate.getJob().getId());
+        
+        //CommentToJson ctj = new CommentToJson(comment.getUser().getId(), comment.getJob().getId(), comment.getContent(), comment.getDate());
+     
+        ApplyToJson atj = new ApplyToJson(apply.getJob().getId(),apply.getCandidate().getId(),apply.getLetter());
         ObjectMapper Obj = new ObjectMapper(); 
          try { 
-            
+           
 
-             jsonStr = Obj.writeValueAsString(rtj);
+             jsonStr = Obj.writeValueAsString(atj);
              
         } 
   
@@ -48,7 +47,7 @@ public class ServiceRate {
                         protected void buildRequestBody(OutputStream os) throws IOException {
                             os.write(jsonStr.getBytes("UTF-8"));
                         }};
-        con.setUrl(PublicVars.ipAdress+"api/rate/");  
+        con.setUrl(PublicVars.ipAdress+"api/apply/");  
         con.setPost(true);
         con.setContentType("application/json");
         con.addArgument("body", jsonStr);

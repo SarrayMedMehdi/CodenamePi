@@ -10,16 +10,21 @@ import com.codename1.components.ImageViewer;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.Button;
 import com.codename1.ui.Component;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
+import com.codename1.ui.Slider;
 import com.codename1.ui.Stroke;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.events.DataChangedListener;
+import com.codename1.ui.events.ScrollListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
@@ -27,6 +32,7 @@ import com.codename1.ui.util.Resources;
 import java.util.ArrayList;
 import java.util.List;
 import tn.esprit.entities.Job;
+import tn.esprit.entities.JobStatus;
 import tn.esprit.service.ServiceJob;
 
 
@@ -45,11 +51,12 @@ public class Home {
     ServiceJob sj = new ServiceJob();
     Label jobTitle,jobSalary,jobStatus ;
     List<Job> jobs ;
-    Container contain ;
-    Button showMore;
+    Container contain,containH ;
+    Button showMore,apply;
     Rate rate = new Rate();
     Comment comm = new Comment();
     Button goComment;
+    Apply apl = new Apply();
     
     public Home() 
     {
@@ -58,8 +65,7 @@ public class Home {
             H.setTextPosition(Component.RIGHT);
     f.getToolbar().setTitleComponent(H);
     f.getToolbar().setTitleCentered(true);
-    vertContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-    
+     
     }
     
     public void Show()
@@ -67,6 +73,10 @@ public class Home {
         CommandSideM();
         ShowJob();
         f.show();
+//       f.scrollComponentToVisible(contain);
+//       f.scrollComponentToVisible(vertContainer);
+     
+       
     }
     
     public void CommandSideM()
@@ -79,41 +89,55 @@ public class Home {
                
             }
         });
-         
+         f.getToolbar().setBackCommand("", e -> login.Show() );
         
-          f.getToolbar().setBackCommand("Logout", e -> login.Show() );
+       
     }
     
     
     public void ShowJob()
     {
         jobs = new ArrayList(sj.fetchJobData());
-
+      vertContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+      contain = new Container(BoxLayout.y());
+      contain.add(new Label("There is no job available come back later"));
         for(Job job : jobs)
         {
+          if (job.getStatus().toUpperCase().equals("CONFIRMED".toUpperCase())){
+               
             showMore = new Button("Show detail");
+            apply = new Button("Apply");
             goComment = new Button("Comments");
-            showMore.addActionListener(e -> ShowMoreButton(job.getId(),job.getTitle(),"Location :\n"+job.getLocation()+"\nJob Creation Date:\n"+job.getCreationDate()));
+            showMore.addActionListener(e -> ShowMoreButton(job,job.getTitle(),"Location :\n"+job.getLocation()+"\nJob Creation Date:\n"+job.getCreationDate()));
+            apply.addActionListener(e -> apl.Show(job.getId()));
             JobTitleBorder(job.getTitle(),job.getId());
             craftContainer();
-            goComment.addActionListener(e -> comm.Show(job.getId()));
+            goComment.addActionListener(e -> comm.Show(job));
             
             contain.add(jobTitle);
             jobSalary = new Label("Salary :"+job.getSalary());
             jobSalary.getUnselectedStyle().setAlignment(Component.CENTER);
             jobSalary.getAllStyles().setFgColor(0x000000);
             contain.add(jobSalary);
-            jobStatus = new Label("Job Status"+job.getStatus());
+         
+            jobStatus = new Label("Expire Date"+job.getExpireDate().toString());
             jobStatus.getUnselectedStyle().setAlignment(Component.CENTER);
             jobStatus.getAllStyles().setFgColor(0x000000);
             contain.add(jobStatus);
-            contain.add(showMore);
+            contain.add(containH.add(apply).add(showMore));
            // contain.setLeadComponent(jobTitle);
             vertContainer.add(contain);
             
-        }
-        f.addComponent(BorderLayout.CENTER,vertContainer);
+          }
+       
+        
+        }//End For loop;
+           vertContainer.setScrollableY(true);
+         f.addComponent(BorderLayout.CENTER,vertContainer);
+         
+       
     }
+    
     
     public void JobTitleBorder(String text,int jobId)
     {
@@ -131,6 +155,8 @@ public class Home {
     public void craftContainer()
     {
         contain = new Container(BoxLayout.y());
+        containH = new Container(new FlowLayout(CENTER));
+        
             Style boxStyle = contain.getUnselectedStyle();
             boxStyle.setBgTransparency(255);
             boxStyle.setBgColor(0xeeeeee);
@@ -138,20 +164,29 @@ public class Home {
             boxStyle.setPaddingUnit(Style.UNIT_TYPE_DIPS);
             boxStyle.setMargin(4, 3, 3, 3);
             boxStyle.setPadding(2, 2, 2, 2);
+           
             
     }
     
-    public void ShowMoreButton(int id,String title,String body)
+    public void ShowMoreButton(Job id,String title,String body)
     {
        
         Dialog d = new Dialog(title);
+        //d.removeAll();
         d.setLayout(new BorderLayout());
         d.add(BorderLayout.CENTER, new SpanLabel(body, body));
-        d.add(BorderLayout.SOUTH,goComment);
+        goComment = new Button("Comment");
+        goComment.addActionListener(e -> comm.Show(id));
+       try { d.add(BorderLayout.SOUTH,goComment); }
+       catch(IllegalArgumentException ie ) {
+           
+           System.out.println("Component already container ");
+       }
         d.showPopupDialog(showMore);
       
       
         
     }
-            
+    
+   
 }
