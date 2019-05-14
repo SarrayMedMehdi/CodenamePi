@@ -9,6 +9,7 @@ import com.codename1.charts.compat.Paint;
 import com.codename1.ui.Button;
 import static com.codename1.ui.CN.RIGHT;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
@@ -61,6 +62,8 @@ public class Login {
             public void actionPerformed(ActionEvent evt) {
                if(CheckLogin(user.getText(),pass.getText()))
             home.Show();
+               else 
+            Dialog.show("Login failed", "Invalid Username/Password", "OK", "Cancel");
             }
         });
         signIn.addActionListener(new ActionListener() {
