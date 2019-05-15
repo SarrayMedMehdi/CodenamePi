@@ -44,7 +44,7 @@ public class Login {
     Home home = new Home();
     Container center ;
     ServiceUser sv = new ServiceUser();
-    static User LOGGED_IN_USER ;
+    public static User LOGGED_IN_USER ;
     SignIn sign ;
     Container photoLogin;
     ImageView image; 

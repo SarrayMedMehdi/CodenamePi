@@ -62,8 +62,11 @@ public class Comment {
 
       @Override
       public void actionPerformed(ActionEvent evt) {
+          tn.esprit.entities.Comment cmt = new tn.esprit.entities.Comment.Builder().job(jobId).user(Login.LOGGED_IN_USER).content(feed.getText()).date( new Date()).build() ;
         svc.pushComment(new tn.esprit.entities.Comment.Builder().job(jobId).user(Login.LOGGED_IN_USER).content(feed.getText()).date( new Date()).build());
-        Dialog.show("Rate", "Your comment has been Added", "OK", "Cancel");
+        
+        svc.craftNotification(jobId, cmt);
+        Dialog.show("Comment", "Your comment has been Added", "OK", "Cancel");
       }
   });
   

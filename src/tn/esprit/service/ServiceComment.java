@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -26,8 +27,10 @@ import tn.esprit.entities.Job;
 import tn.esprit.entities.JobStatus;
 import tn.esprit.entities.User;
 import tn.esprit.utils.CommentToJson;
-
+import tn.esprit.entities.Notification;
+import tn.esprit.utils.NotificationToJson;
 import tn.esprit.utils.PublicVars;
+import tn.esprit.gui.Login;
 
 /**
  *
@@ -128,6 +131,45 @@ public class ServiceComment {
         NetworkManager.getInstance().addToQueueAndWait(con);
           
           return cmt ;
+      }
+      public void craftNotification(Job company,Comment comment)
+      {
+          NotificationToJson ntf = new NotificationToJson();
+          
+          ntf.setIs_read(0);
+          ntf.setJob(company.getId());
+          ntf.setRecruiter(Login.LOGGED_IN_USER.getId());
+          ntf.setDate_notif(new Date());
+            ObjectMapper Obj = new ObjectMapper(); 
+         try { 
+            Obj.setDateFormat(inputFormat);
+
+             jsonStr = Obj.writeValueAsString(ntf);
+             
+        } 
+  
+        catch (IOException e) { 
+            e.printStackTrace(); 
+        } 
+         
+          ConnectionRequest con = new ConnectionRequest(){
+                        @Override
+                        protected void buildRequestBody(OutputStream os) throws IOException {
+                            os.write(jsonStr.getBytes("UTF-8"));
+                        }};
+        con.setUrl(PublicVars.ipAdress+"api/notification/");  
+        con.setPost(true);
+        con.setContentType("application/json");
+        con.addArgument("body", jsonStr);
+
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
+            System.out.println(str);
+            
+
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+          
       }
     
     
