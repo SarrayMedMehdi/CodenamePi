@@ -20,6 +20,7 @@ import tn.esprit.entities.UserAccountStatus;
 import tn.esprit.entities.UserRole;
 import tn.esprit.utils.PublicVars;
 import org.codehaus.jackson.map.ObjectMapper; 
+import static tn.esprit.utils.PublicVars.ipAdress;
 /**
  *
  * @author Mehdi Sarray
@@ -84,7 +85,7 @@ public class ServiceUser {
     public User login(String username,String password)
     {
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost:3000/api/user/");  
+        con.setUrl(PublicVars.ipAdress+"api/user/");  
         con.setPost(false);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -130,7 +131,7 @@ public class ServiceUser {
                         protected void buildRequestBody(OutputStream os) throws IOException {
                             os.write(replaceString.getBytes("UTF-8"));
                         }};
-        con.setUrl("http://localhost:3000/api/user/"); 
+        con.setUrl(PublicVars.ipAdress+"api/user/");  
         con.setPost(true);
         con.setContentType("application/json");
         con.addArgument("body", replaceString);
