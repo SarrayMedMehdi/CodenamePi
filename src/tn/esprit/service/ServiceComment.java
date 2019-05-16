@@ -138,7 +138,7 @@ public class ServiceComment {
           
           ntf.setIs_read(0);
           ntf.setJob(company.getId());
-          ntf.setRecruiter(Login.LOGGED_IN_USER.getId());
+          ntf.setRecruiter(comment.getJob().getCompany().getRecruiter().getId());
           ntf.setDate_notif(new Date());
             ObjectMapper Obj = new ObjectMapper(); 
          try { 
