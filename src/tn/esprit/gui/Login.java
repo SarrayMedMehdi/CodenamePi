@@ -8,7 +8,10 @@ package tn.esprit.gui;
 import com.codename1.charts.compat.Paint;
 import com.codename1.ui.Button;
 import static com.codename1.ui.CN.RIGHT;
+import static com.codename1.ui.CN.TOP;
+import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
+import com.codename1.ui.Dialog;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
@@ -17,6 +20,11 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.plaf.Style;
+import com.codename1.ui.plaf.UIManager;
+import com.codename1.ui.util.Resources;
+import javafx.scene.image.ImageView;
 import tn.esprit.entities.User;
 import tn.esprit.service.ServiceUser;
 
@@ -27,6 +35,7 @@ import tn.esprit.service.ServiceUser;
 
 public class Login {
     Form f ;
+    private Resources theme ;
     Label username;
     Label password;
     TextField user;
@@ -35,25 +44,32 @@ public class Login {
     Home home = new Home();
     Container center ;
     ServiceUser sv = new ServiceUser();
-    static User LOGGED_IN_USER ;
+    public static User LOGGED_IN_USER ;
     SignIn sign ;
+    Container photoLogin;
+    ImageView image; 
             
     
     public Login(){
         f = new Form(new BorderLayout(BorderLayout.CENTER_BEHAVIOR_CENTER_ABSOLUTE));
         center = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        photoLogin = new Container(new FlowLayout(TOP));
         login = new Button("Login");
         signIn= new Button("Signin"); 
         username= new Label("Username");
         password= new Label("Password");
-        user = new TextField("","Userername",RIGHT,TextArea.ANY);
+        user = new TextField("","Username",RIGHT,TextArea.ANY);
         pass = new TextField("","Password",RIGHT,TextArea.PASSWORD);
+        theme = UIManager.initFirstTheme("/theme");
     }
     
     public void Show()
     {
+       
+        center.add(photoLogin.add(theme.getImage("logologin.png")));
         
         center.add(username).add(user).add(password).add(pass);
+        
         center.add(logSign()) ;
         login.addActionListener(new ActionListener() {
 
@@ -61,6 +77,8 @@ public class Login {
             public void actionPerformed(ActionEvent evt) {
                if(CheckLogin(user.getText(),pass.getText()))
             home.Show();
+               else 
+            Dialog.show("Login failed", "Invalid Username/Password", "OK", "Cancel");
             }
         });
         signIn.addActionListener(new ActionListener() {
@@ -96,5 +114,5 @@ public class Login {
         
         return false;
    }
-    
+       
 }

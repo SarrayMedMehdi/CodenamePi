@@ -39,6 +39,10 @@ public class SignIn {
     Form f = new Form("Sign In",new BorderLayout());
     TextField email ;
     TextField password ;
+    Label firstNlb = new Label("FirstName");
+    Label lastnNlb = new Label("LastName");
+    Label userNlb = new Label("UserName");
+    Label addrNlb = new Label("Adresse");
     Label emailAddress = new Label("Email");
     Label pass = new Label("Password");
     Button submit = new Button("Submit");
@@ -47,33 +51,46 @@ public class SignIn {
     
      TextModeLayout tm = new TextModeLayout(4, 2);
      Container content = new Container(tm);
-     TextComponent firstname = new TextComponent().labelAndHint("FirstName");
-     TextComponent lastname = new TextComponent().labelAndHint("LastName");
-     TextComponent username = new TextComponent().labelAndHint("username");
-      TextComponent adresse = new TextComponent().labelAndHint("Adresse");
+     TextField firstname = new TextField("","FirstName",RIGHT,TextArea.ANY);
+     TextField lastname  = new TextField("","LastName",RIGHT,TextArea.ANY);
+     TextField username = new TextField("","Username",RIGHT,TextArea.ANY);
+      TextField adresse = new TextField("","Adresse",RIGHT,TextArea.ANY);
     PickerComponent authorization = PickerComponent.createStrings("RECRUTER", "CANDIDATE").label("Account Type");
         
      public void initialise()
      {
          sv = new ServiceUser();
           content.add(tm.createConstraint().horizontalSpan(2), new SpanLabel("Social Media Sign in form"));
-          
+           content.add(firstNlb);
             content.add(tm.createConstraint().horizontalSpan(2), firstname);
-              content.add(tm.createConstraint().horizontalSpan(2), lastname);
+            content.add(lastnNlb);
+            content.add(tm.createConstraint().horizontalSpan(2), lastname);
             
-            
+            content.add(userNlb);
             content.add(tm.createConstraint().horizontalSpan(2), username);
-         
+         Validator val = new Validator();
+        val.setShowErrorMessageForFocusedComponent(true);
+        val.addConstraint(firstname, 
+                new GroupConstraint(
+                        new LengthConstraint(3), 
+                        new RegexConstraint("^([a-zA-Z ]*)$", "Please only use latin characters for name"))).
+                addSubmitButtons(submit);
             
             email = new TextField("","Email",RIGHT,TextArea.EMAILADDR);
             password = new TextField("","Password",RIGHT,TextArea.PASSWORD);
             content.add(emailAddress).add(email).add(pass).add(password);
             content.add(authorization);
-           
+           content.add(addrNlb);
             content.add(tm.createConstraint().horizontalSpan(2), adresse);
+            val.addConstraint(email, 
+                new GroupConstraint(
+                        new LengthConstraint(5), 
+                        new RegexConstraint("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$", "Please only use a valid email"))).
+                addSubmitButtons(submit);
+            
             FontImage.setMaterialIcon(submit, FontImage.MATERIAL_DONE);
         submit.addActionListener(e -> {
-            showOKForm(firstname.getField().getText());
+            showOKForm(firstname.getText());
         });
      }
      
@@ -81,8 +98,8 @@ public class SignIn {
      {
          f.add(CENTER, content);
         f.add(SOUTH, submit);
-
-        
+        lg = new Login();
+        f.getToolbar().setBackCommand("Logout", e -> lg.Show() );
         f.show();
      }
      
@@ -90,15 +107,15 @@ public class SignIn {
      {
          
          
-         User user = new User.Builder().firstName(fname).lastName(lastname.getField().getText()).userName(username.getField().getText())
-                        .password(password.getText()).email(email.getText()).adress(adresse.getField().getText())
+         User user = new User.Builder().firstName(fname).lastName(lastname.getText()).userName(username.getText())
+                        .password(password.getText()).email(email.getText()).adress(adresse.getText())
                         .authorization(authorization.getSelectCommandText().equals("RECRUTER") ? UserRole.RECRUITER : UserRole.CANDIDATE).photo("")
                         .accountStatus(UserAccountStatus.ACTIVATED).activationCode("").build();
          sv.pushUser(user);
          
          Form f = new Form("Thanks", BoxLayout.y());
         f.add(new SpanLabel("Thanks " + fname + " for your submission. You can press the back arrow and login "));
-         lg = new Login();
+        
         f.getToolbar().setBackCommand("", e -> lg.Show() );
 
         f.showBack();
