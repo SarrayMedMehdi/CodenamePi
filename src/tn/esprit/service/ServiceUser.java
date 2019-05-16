@@ -20,6 +20,7 @@ import tn.esprit.entities.UserAccountStatus;
 import tn.esprit.entities.UserRole;
 import tn.esprit.utils.PublicVars;
 import org.codehaus.jackson.map.ObjectMapper; 
+import tn.esprit.entities.Company;
 import static tn.esprit.utils.PublicVars.ipAdress;
 /**
  *
@@ -145,6 +146,24 @@ public class ServiceUser {
         
     }
     
+ public User getUserById(int id)
+ {
+      ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(PublicVars.ipAdress+"api/user/"+id);  
+        con.setPost(false);
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+              //  ServiceUser ser = new ServiceUser();
+                users = parseUsers(new String(con.getResponseData()));
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+       
+        
+    return users.get(0) ; 
+ }
     
     
+     
 }

@@ -6,36 +6,41 @@
 package tn.esprit.service;
 
 import com.codename1.io.ConnectionRequest;
-import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
-import com.codename1.ui.events.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
-import tn.esprit.entities.Job;
-import tn.esprit.entities.Rate;
+import tn.esprit.entities.Reclamation;
 import tn.esprit.entities.User;
+import tn.esprit.gui.Login;
+import tn.esprit.utils.ClaimToJson;
 import tn.esprit.utils.PublicVars;
-import tn.esprit.utils.RateToJson;
 
 /**
  *
  * @author Mehdi Sarray
  */
-public class ServiceRate {
-    String jsonStr = "" ;
-  
-    
-      public void pushRate(Rate rate)
+public class ServiceClaim {
+     String jsonStr = "" ;
+    public void pushClaim(Reclamation clm)
     {
-
-        RateToJson rtj = new RateToJson(rate.getCandidate().getId(), rate.getFeedback(), rate.getNote(), rate.getJob().getId());
+         
+        ClaimToJson ctj = new ClaimToJson();
+        ctj.setclaimer(Login.LOGGED_IN_USER.getId());
+        ctj.setcomment(clm.getComment().getId());
+        ctj.setdetails(clm.getDetails());
+        ctj.setjob(clm.getJob().getId());
+        ctj.settype(clm.getType());
+        ctj.setstatus("OPEN");
+        ctj.setstaff(2);
+        //ctj.setid(21);
+      
         ObjectMapper Obj = new ObjectMapper(); 
          try { 
             
-
-             jsonStr = Obj.writeValueAsString(rtj);
+            // get Oraganisation object as a json string 
+             jsonStr = Obj.writeValueAsString(ctj);
+             
              
         } 
   
@@ -48,19 +53,17 @@ public class ServiceRate {
                         protected void buildRequestBody(OutputStream os) throws IOException {
                             os.write(jsonStr.getBytes("UTF-8"));
                         }};
-        con.setUrl(PublicVars.ipAdress+"api/rate/");  
+        con.setUrl(PublicVars.ipAdress+"api/reclamation/");  
         con.setPost(true);
         con.setContentType("application/json");
         con.addArgument("body", jsonStr);
-       
+
         con.addResponseListener((e) -> {
-            String str = new String(con.getResponseData());        
+            String str = new String(con.getResponseData());
             System.out.println(str);
-            
 
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
-        
     }
-
+   
 }
