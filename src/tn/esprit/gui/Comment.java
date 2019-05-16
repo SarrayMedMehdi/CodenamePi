@@ -78,6 +78,7 @@ public class Comment {
         
        for(tn.esprit.entities.Comment s : comment)
            comg.add(new Label(s.getContent()+"\n"+s.getDate().toString()));
-        
+        comg.setScrollableY(true);
+        comg.setScrollableX(true);
     }
 }

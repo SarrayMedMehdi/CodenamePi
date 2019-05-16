@@ -69,6 +69,7 @@ public Slider createStarRankSlider() {
     initStarRankStyle(starRank.getSliderFullUnselectedStyle(), fullStar);
     starRank.setPreferredSize(new Dimension(fullStar.getWidth() * 5, fullStar.getHeight()));
     starRank.setMinValue(1);
+    starRank.setProgress(1);
     
     return starRank;
 }
