@@ -234,6 +234,14 @@ public final class Comment implements Serializable {
         this.content = content;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
     /**
      *
      * @return
