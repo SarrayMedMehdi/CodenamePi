@@ -13,6 +13,7 @@ import com.codename1.ui.Component;
 import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Display;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
@@ -29,10 +30,12 @@ import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import tn.esprit.entities.Job;
 import tn.esprit.entities.JobStatus;
+import static tn.esprit.gui.Login.getImageFromTheme;
 import tn.esprit.service.ServiceJob;
 
 
@@ -141,8 +144,8 @@ public class Home {
     
     public void JobTitleBorder(String text,int jobId)
     {
-         jobTitle = new Label(text);
-         
+         jobTitle = new Label(text,getImageFromTheme("icons8_star_512px.png").scaledWidth(Math.round(Display.getInstance().getDisplayWidth() / 5))); //repainting the Image
+         jobTitle.setTextPosition(Component.RIGHT);
             jobTitle.getUnselectedStyle().setAlignment(Component.CENTER);
             jobTitle.getUnselectedStyle().setBorder(
            RoundBorder.create().rectangle(true).stroke(new Stroke(2, Stroke.CAP_SQUARE, Stroke.JOIN_MITER, 4)).
@@ -187,6 +190,17 @@ public class Home {
       
         
     }
+    
+      public static Image getImageFromTheme(String name) {
+    try {
+        Resources resFile = Resources.openLayered("/theme");
+        Image image = resFile.getImage(name);
+        return image;
+    } catch (IOException ioe) {
+       
+    }
+    return null;
+}
     
    
 }
