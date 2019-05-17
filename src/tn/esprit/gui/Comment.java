@@ -44,9 +44,9 @@ public class Comment {
     
     private Resources theme ;
     private Home home ;
-    private Button claim;
-    private Container contain;
-    private TextArea claimDetail;
+    private Button claim,edit,makeChange;
+    private Container contain,editContain;
+    private TextArea claimDetail,editedText;
     RadioButton fraud;
     RadioButton racism ;
     RadioButton fakeuser;
@@ -63,6 +63,7 @@ public class Comment {
     List<tn.esprit.entities.Comment> comment ;
     ServiceComment svc = new ServiceComment();
     private Button applyClaim;
+    private Container containerbuttonscom;
     
     public void Show(Job jobId) {
   Form hi = new Form("Comment Section", new BoxLayout(BoxLayout.Y_AXIS));
@@ -88,11 +89,14 @@ public class Comment {
 
       @Override
       public void actionPerformed(ActionEvent evt) {
+          if (!feed.getText().isEmpty()){
           tn.esprit.entities.Comment cmt = new tn.esprit.entities.Comment.Builder().job(jobId).user(Login.LOGGED_IN_USER).content(feed.getText()).date( new Date()).build() ;
         svc.pushComment(new tn.esprit.entities.Comment.Builder().job(jobId).user(Login.LOGGED_IN_USER).content(feed.getText()).date( new Date()).build());
         
         svc.craftNotification(jobId, cmt);
-        Dialog.show("Comment", "Your comment has been Added", "OK", "Cancel");
+        Dialog.show("Comment", "Your comment has been Added", "OK", "Cancel");}
+          else
+              Dialog.show("Comment", "You can't add an empty comment", "OK", "Cancel");
       }
   });
   
@@ -106,13 +110,41 @@ public class Comment {
        
       for(tn.esprit.entities.Comment s : comment){
           claim = new Button("Claim");
-          comg.add(s.getContent()+" "+s.getDate().toString()).add(claim);
+          edit = new Button("Edit");
+          containerbuttonscom = new Container(BoxLayout.x());
+          containerbuttonscom.add(claim).add(edit);
+          edit.setVisible(false);
+          comg.add(s.getContent()+" "+s.getDate().toString());
+          if (s.getUser().getId() == Login.LOGGED_IN_USER.getId())
+          {
+              edit.setVisible(true);
+          }
+          comg.add(containerbuttonscom);
           claim.addActionListener(e -> { showClaim(JobId , s.getId());} );
+          edit.addActionListener(e -> { showEdit(s); comg.repaint(); }); //edit comment 
       }
         
         comg.setScrollableY(true);
-        comg.setScrollableX(true);        
+        comg.setScrollableX(true);    
+       
     }
+     public void showEdit(tn.esprit.entities.Comment com)
+        {
+            Dialog d = new Dialog("Comment");
+            d.setLayout(new BorderLayout());
+            editContain = new Container(BoxLayout.y());
+            editedText = new TextArea("Enter your modification's");
+            makeChange = new Button("Submit Changes");
+            editContain.add(editedText).add(makeChange);
+            makeChange.addActionListener(e -> {
+            if (editedText.getText().isEmpty()){
+                Dialog.show("Edit", "You edited with empty comment!", "OK", "Cancel");
+            }else{
+                 System.out.println("s");  // Call to service 
+                    }
+            }); 
+            d.showPopupDialog(edit);
+        }
      public void showClaim(int job, int com)
         {
         Dialog d = new Dialog("Claim");
