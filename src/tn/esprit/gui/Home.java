@@ -13,6 +13,9 @@ import com.codename1.ui.Component;
 import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Display;
+import com.codename1.ui.Font;
+import com.codename1.ui.FontImage;
 import com.codename1.ui.Form;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
@@ -22,18 +25,23 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.events.DataChangedListener;
 import com.codename1.ui.events.ScrollListener;
+import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import tn.esprit.entities.Job;
 import tn.esprit.entities.JobStatus;
 import tn.esprit.service.ServiceJob;
+import tn.esprit.service.ServiceRate;
+import tn.esprit.utils.SortByRate;
 
 
 
@@ -47,8 +55,9 @@ public class Home {
     Form f = new Form(new BorderLayout());
     Login login ;
     Label H = new Label("Social Pro 2019/2020");
-    Container vertContainer;
+    Container vertContainer,sliderContainer;
     ServiceJob sj = new ServiceJob();
+    ServiceRate svc = new ServiceRate();
     Label jobTitle,jobSalary,jobStatus ;
     List<Job> jobs ;
     Container contain,containH ;
@@ -57,7 +66,8 @@ public class Home {
     Comment comm = new Comment();
     Button goComment;
     Apply apl = new Apply();
-    
+    Slider slider ;
+    Profile prf = new Profile();
     public Home() 
     {
         theme = UIManager.initFirstTheme("/theme");
@@ -86,10 +96,10 @@ public class Home {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-               
+               prf.ShowSignIn();
             }
         });
-         f.getToolbar().setBackCommand("", e -> login.Show() );
+         f.getToolbar().setBackCommand("", e -> { f = new Form(new BorderLayout()); login.Show();} );
         
        
     }
@@ -98,13 +108,20 @@ public class Home {
     public void ShowJob()
     {
         jobs = new ArrayList(sj.fetchJobData());
+        Trirate(jobs);
+        
       vertContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
       contain = new Container(BoxLayout.y());
+      
       contain.add(new Label("There is no job available come back later"));
         for(Job job : jobs)
         {
           if (job.getStatus().toUpperCase().equals("CONFIRMED".toUpperCase())){
-               
+              sliderContainer = new Container(BoxLayout.y()); 
+               slider = createStarRankSlider();
+              
+               slider.setProgress(SortByRate.getRateSum(svc.findRateByJob(job.getId())));
+               sliderContainer.add(FlowLayout.encloseCenter(slider));
             showMore = new Button("Show detail");
             apply = new Button("Apply");
             goComment = new Button("Comments");
@@ -113,7 +130,7 @@ public class Home {
             JobTitleBorder(job.getTitle(),job.getId());
             craftContainer();
             goComment.addActionListener(e -> comm.Show(job));
-            
+            contain.add(sliderContainer);
             contain.add(jobTitle);
             jobSalary = new Label("Salary :"+job.getSalary());
             jobSalary.getUnselectedStyle().setAlignment(Component.CENTER);
@@ -136,6 +153,11 @@ public class Home {
          f.addComponent(BorderLayout.CENTER,vertContainer);
          
        
+    }
+    
+    public void Trirate(List<Job> job) //doing some Magic
+    {
+        Collections.sort(job , new SortByRate());
     }
     
     
@@ -172,7 +194,6 @@ public class Home {
     {
        
         Dialog d = new Dialog(title);
-        //d.removeAll();
         d.setLayout(new BorderLayout());
         d.add(BorderLayout.CENTER, new SpanLabel(body, body));
         goComment = new Button("Comment");
@@ -187,6 +208,36 @@ public class Home {
       
         
     }
+  
     
+       //Crafting STARS 
+    public void initStarRankStyle(Style s, Image star) {
+        s.setBackgroundType(Style.BACKGROUND_IMAGE_TILE_BOTH);
+        s.setBorder(Border.createEmpty());
+        s.setBgImage(star);
+        s.setBgTransparency(0);
+
+    }
+
+    public Slider createStarRankSlider() {
+        Slider starRank = new Slider();
+        Font fnt = Font.createTrueTypeFont("native:MainLight", "native:MainLight").
+                derive(Display.getInstance().convertToPixels(5, true), Font.STYLE_PLAIN);
+        Style s = new Style(0xffff33, 0, fnt, (byte) 0);
+        Image fullStar = FontImage.createMaterial(FontImage.MATERIAL_STAR, s).toImage();
+        s.setOpacity(100);
+        s.setFgColor(0);
+        Image emptyStar = FontImage.createMaterial(FontImage.MATERIAL_STAR, s).toImage();
+        initStarRankStyle(starRank.getSliderEmptySelectedStyle(), emptyStar);
+        initStarRankStyle(starRank.getSliderEmptyUnselectedStyle(), emptyStar);
+        initStarRankStyle(starRank.getSliderFullSelectedStyle(), fullStar);
+        initStarRankStyle(starRank.getSliderFullUnselectedStyle(), fullStar);
+        starRank.setPreferredSize(new Dimension(fullStar.getWidth() * 5, fullStar.getHeight()));
+        starRank.setMinValue(1);
+        starRank.setMaxValue(6);
+        starRank.setEditable(false);
+
+        return starRank;
+    }
    
 }

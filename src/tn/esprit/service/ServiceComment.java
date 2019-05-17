@@ -91,8 +91,10 @@ public class ServiceComment {
                   Comment cment = new Comment.Builder().build();
                   
                    float id = Float.parseFloat(obj.get("id").toString());
+                   cment.setId((int)id);
                   float jid = Float.parseFloat(obj.get("job").toString());
-                  cment.setId((int)id);
+                  
+                  cment.setJob(new Job.Builder().id((int)jid).build());
                   float uid = Float.parseFloat(obj.get("user").toString());
                   cment.setUser(new User.Builder().id((int)uid).build());
                   cment.setContent(obj.get("content").toString());
@@ -170,6 +172,47 @@ public class ServiceComment {
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
           
+      }
+      
+      public void editCommen(Comment comment){
+          
+          
+        CommentToJson ctj = new CommentToJson();
+        ctj.setId(comment.getId());
+        ctj.setjob(comment.getJob().getId());
+        ctj.setuser(comment.getUser().getId());
+        ctj.setcontent(comment.getContent());
+        ctj.setdatecom(comment.getDate());
+          
+        ObjectMapper Obj = new ObjectMapper(); 
+         try { 
+            Obj.setDateFormat(inputFormat);
+
+             jsonStr = Obj.writeValueAsString(ctj);
+             
+        } 
+  
+        catch (IOException e) { 
+            e.printStackTrace(); 
+        } 
+         
+          ConnectionRequest con = new ConnectionRequest(){
+                        @Override
+                        protected void buildRequestBody(OutputStream os) throws IOException {
+                            os.write(jsonStr.getBytes("UTF-8"));
+                        }};
+        con.setUrl(PublicVars.ipAdress+"api/comment/");  
+        con.setPost(true);
+        con.addArgument("body", jsonStr);
+        con.setHttpMethod("PUT");               
+        con.setContentType("application/json");
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
+            System.out.println(str);
+            
+
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
       }
     
     

@@ -43,6 +43,7 @@ public class Rate {
     
     
      Form hi = new Form("Job Rating", new BoxLayout(BoxLayout.Y_AXIS));
+     
    public void initStarRankStyle(Style s, Image star) {
     s.setBackgroundType(Style.BACKGROUND_IMAGE_TILE_BOTH);
     s.setBorder(Border.createEmpty());

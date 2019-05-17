@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class CommentToJson {
     
+    private int id;
     private int user;
     private int job;
     private String content;
@@ -24,7 +25,9 @@ public class CommentToJson {
         this.datecom = datecom;
     }
     
-    
+    public CommentToJson(){
+        
+    }
     
 
     public int getuser() {
@@ -57,6 +60,14 @@ public class CommentToJson {
 
     public void setdatecom(Date  datecom) {
         this.datecom = datecom;
+    }
+
+    public int getid() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
     
     

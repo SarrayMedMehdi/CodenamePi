@@ -30,6 +30,7 @@ public class ServiceUser {
     
     private List<User> users = new ArrayList() ;
     private String replaceString ="";
+    String jsonStr = "" ;
     
     public List<User> parseUsers(String json)
     {
@@ -108,7 +109,7 @@ public class ServiceUser {
 }
     public void pushUser(User user)
     {
-        String jsonStr = "" ;
+        
       
         ObjectMapper Obj = new ObjectMapper(); 
          try { 
@@ -164,6 +165,41 @@ public class ServiceUser {
     return users.get(0) ; 
  }
     
+    public void updateUser(User us)
+    {
+          ObjectMapper Obj = new ObjectMapper(); 
+         try { 
+           
+
+              // get Oraganisation object as a json string 
+             jsonStr = Obj.writeValueAsString(us);
+             System.out.println(jsonStr);
+        } 
+  
+        catch (IOException e) { 
+            e.printStackTrace(); 
+        } 
+         
+          ConnectionRequest con = new ConnectionRequest(){
+                        @Override
+                        protected void buildRequestBody(OutputStream os) throws IOException {
+                            os.write(jsonStr.getBytes("UTF-8"));
+                        }};
+        con.setUrl(PublicVars.ipAdress+"api/user/");  
+        con.setPost(true);
+        con.addArgument("body", jsonStr);
+        con.setHttpMethod("PUT");               
+        con.setContentType("application/json");
+        con.addResponseListener((e) -> {
+            String str = new String(con.getResponseData());
+            System.out.println(str);
+            
+
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+      }
     
-     
+
 }
+     
+
