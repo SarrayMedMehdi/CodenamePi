@@ -12,7 +12,9 @@ import static com.codename1.ui.CN.TOP;
 import static com.codename1.ui.Component.CENTER;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
+import com.codename1.ui.Display;
 import com.codename1.ui.Form;
+import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
 import com.codename1.ui.TextField;
@@ -24,7 +26,7 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
-import javafx.scene.image.ImageView;
+import java.io.IOException;
 import tn.esprit.entities.User;
 import tn.esprit.service.ServiceUser;
 
@@ -47,7 +49,6 @@ public class Login {
     public static User LOGGED_IN_USER ;
     SignIn sign ;
     Container photoLogin;
-    ImageView image; 
             
     
     public Login(){
@@ -66,7 +67,7 @@ public class Login {
     public void Show()
     {
        
-        center.add(photoLogin.add(theme.getImage("logologin.png")));
+        center.add(photoLogin.add(getImageFromTheme("logologin.png").scaledWidth(Math.round(Display.getInstance().getDisplayWidth() / 6))));
         
         center.add(username).add(user).add(password).add(pass);
         
@@ -114,5 +115,15 @@ public class Login {
         
         return false;
    }
+   public static Image getImageFromTheme(String name) {
+    try {
+        Resources resFile = Resources.openLayered("/theme");
+        Image image = resFile.getImage(name);
+        return image;
+    } catch (IOException ioe) {
+       
+    }
+    return null;
+}
        
 }
