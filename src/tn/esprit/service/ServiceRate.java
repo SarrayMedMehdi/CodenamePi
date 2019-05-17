@@ -25,7 +25,7 @@ import tn.esprit.utils.RateToJson;
  */
 public class ServiceRate {
     String jsonStr = "" ;
-
+  
     
       public void pushRate(Rate rate)
     {
@@ -52,9 +52,9 @@ public class ServiceRate {
         con.setPost(true);
         con.setContentType("application/json");
         con.addArgument("body", jsonStr);
-
+       
         con.addResponseListener((e) -> {
-            String str = new String(con.getResponseData());
+            String str = new String(con.getResponseData());        
             System.out.println(str);
             
 
@@ -62,5 +62,5 @@ public class ServiceRate {
         NetworkManager.getInstance().addToQueueAndWait(con);
         
     }
-    
+
 }
