@@ -91,7 +91,7 @@ public class ServiceComment {
                   Comment cment = new Comment.Builder().build();
                   
                    float id = Float.parseFloat(obj.get("id").toString());
-                  
+                  float jid = Float.parseFloat(obj.get("job").toString());
                   cment.setId((int)id);
                   float uid = Float.parseFloat(obj.get("user").toString());
                   cment.setUser(new User.Builder().id((int)uid).build());
@@ -101,7 +101,7 @@ public class ServiceComment {
                 } catch (ParseException ex) {
                    
                 }
-                if(id == jobId)
+                if((int)jid == jobId)
                   cmt.add(cment);
                }
             
@@ -138,7 +138,7 @@ public class ServiceComment {
           
           ntf.setIs_read(0);
           ntf.setJob(company.getId());
-          ntf.setRecruiter(Login.LOGGED_IN_USER.getId());
+          ntf.setRecruiter(comment.getJob().getCompany().getRecruiter().getId());
           ntf.setDate_notif(new Date());
             ObjectMapper Obj = new ObjectMapper(); 
          try { 
