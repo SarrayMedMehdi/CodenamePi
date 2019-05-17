@@ -63,6 +63,7 @@ public class Comment {
     List<tn.esprit.entities.Comment> comment ;
     ServiceComment svc = new ServiceComment();
     private Button applyClaim;
+    private Container containerbuttonscom;
     
     public void Show(Job jobId) {
   Form hi = new Form("Comment Section", new BoxLayout(BoxLayout.Y_AXIS));
@@ -110,12 +111,15 @@ public class Comment {
       for(tn.esprit.entities.Comment s : comment){
           claim = new Button("Claim");
           edit = new Button("Edit");
-          
-          comg.add(s.getContent()+" "+s.getDate().toString()).add(claim);
+          containerbuttonscom = new Container(BoxLayout.x());
+          containerbuttonscom.add(claim).add(edit);
+          edit.setVisible(false);
+          comg.add(s.getContent()+" "+s.getDate().toString());
           if (s.getUser().getId() == Login.LOGGED_IN_USER.getId())
           {
-              comg.add(edit);
+              edit.setVisible(true);
           }
+          comg.add(containerbuttonscom);
           claim.addActionListener(e -> { showClaim(JobId , s.getId());} );
           edit.addActionListener(e -> { showEdit(s); comg.repaint(); }); //edit comment 
       }
@@ -129,7 +133,7 @@ public class Comment {
             Dialog d = new Dialog("Comment");
             d.setLayout(new BorderLayout());
             editContain = new Container(BoxLayout.y());
-            editedText = new TextArea("Enter your modification");
+            editedText = new TextArea("Enter your modification's");
             makeChange = new Button("Submit Changes");
             editContain.add(editedText).add(makeChange);
             makeChange.addActionListener(e -> {
