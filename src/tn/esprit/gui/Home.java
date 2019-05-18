@@ -37,9 +37,13 @@ import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import tn.esprit.entities.Abonnement;
 import tn.esprit.entities.Job;
 import tn.esprit.entities.JobStatus;
+import tn.esprit.entities.User;
+import tn.esprit.service.ServiceAbonnement;
 import tn.esprit.service.ServiceJob;
 import tn.esprit.service.ServiceRate;
 import tn.esprit.utils.SortByRate;
@@ -72,7 +76,9 @@ public class Home {
     Container searchj = new Container(BoxLayout.x());
     TextField search = new TextField("search job");
     Button src = new Button("search");
+    Button fav ;
     searchedJob srj = new searchedJob();
+    ServiceAbonnement  sa = new ServiceAbonnement();
     public Home() 
     {
         theme = UIManager.initFirstTheme("/theme");
@@ -100,15 +106,15 @@ public class Home {
     
     public void CommandSideM()
     {
-         login = new Login();
-        f.getToolbar().addCommandToRightSideMenu("Profile", theme.getImage("icons8_guest_male_64px_1.png"), new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-               prf.ShowSignIn();
-            }
-        });
-         f.getToolbar().setBackCommand("", e -> { f = new Form(new BorderLayout()); login.Show();} );
+         
+//        f.getToolbar().addCommandToRightSideMenu("Profile", theme.getImage("icons8_guest_male_64px_1.png"), new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent evt) {
+//               prf.ShowSignIn();
+//            }
+//        });
+         f.getToolbar().setBackCommand("", e -> { f = new Form(new BorderLayout()); login = new Login(); login.Show();} );
         
        
     }
@@ -153,12 +159,21 @@ public class Home {
             jobStatus.getUnselectedStyle().setAlignment(Component.CENTER);
             jobStatus.getAllStyles().setFgColor(0x000000);
             contain.add(jobStatus);
-            contain.add(containH.add(apply).add(showMore));
+            
+            fav = new Button("Add to favoris");
+            fav.addActionListener(e -> { sa.AddAbonnement(new Abonnement.Builder()
+                                                                .candidate(Login.LOGGED_IN_USER)
+                                                                .company(job.getCompany()).dateAbonnement(new Date()).build());
+            
+                                                                 Dialog.show("Favoris", "Favoris Added", "OK", "Cancel");
+            });
+            contain.add(containH.add(apply).add(showMore).add(fav));
+            
            // contain.setLeadComponent(jobTitle);
             vertContainer.add(contain);
             
           }
-       
+          
         
         }//End For loop;
            vertContainer.setScrollableY(true);
