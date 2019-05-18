@@ -5,8 +5,6 @@
  */
 package tn.esprit.gui;
 
-
-import com.codename1.components.ImageViewer;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.Button;
 import com.codename1.ui.Component;
@@ -24,8 +22,6 @@ import com.codename1.ui.Stroke;
 import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
-import com.codename1.ui.events.DataChangedListener;
-import com.codename1.ui.events.ScrollListener;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -39,20 +35,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import tn.esprit.entities.Job;
-import tn.esprit.entities.JobStatus;
 import tn.esprit.service.ServiceJob;
 import tn.esprit.service.ServiceRate;
 import tn.esprit.utils.SortByRate;
 
-
-
 /**
  *
- * @author Mehdi Sarray
+ * @author habib
  */
-public class Home {
+public class searchedJob {
     
-    private Resources theme ;
+    
+    
+    
+    
+    
+      private Resources theme ;
     Form f = new Form(new BorderLayout());
     Login login ;
     Label H = new Label("Social Pro 2019/2020");
@@ -72,8 +70,9 @@ public class Home {
     Container searchj = new Container(BoxLayout.x());
     TextField search = new TextField("search job");
     Button src = new Button("search");
-    searchedJob srj = new searchedJob();
-    public Home() 
+    Home home ;
+    
+    public searchedJob() 
     {
         theme = UIManager.initFirstTheme("/theme");
             H.setIcon(theme.getImage("icons8_myspace_64px.png"));
@@ -83,24 +82,22 @@ public class Home {
     f.getToolbar().setTitleComponent(H);
     f.getToolbar().setTitleCentered(true);
     f.add(BorderLayout.NORTH,searchj);
-    
      
     }
     
-    public void Show()
+    public void Show(Job j)
     {
         CommandSideM();
-        ShowJob();
+        ShowJob(j);
         f.show();
-//       f.scrollComponentToVisible(contain);
-//       f.scrollComponentToVisible(vertContainer);
+
      
        
     }
     
     public void CommandSideM()
     {
-         login = new Login();
+         
         f.getToolbar().addCommandToRightSideMenu("Profile", theme.getImage("icons8_guest_male_64px_1.png"), new ActionListener() {
 
             @Override
@@ -108,27 +105,24 @@ public class Home {
                prf.ShowSignIn();
             }
         });
-         f.getToolbar().setBackCommand("", e -> { f = new Form(new BorderLayout()); login.Show();} );
+         f.getToolbar().setBackCommand("", e -> { f = new Form(new BorderLayout()); home = new Home(); home.Show(); } );
         
-       
     }
     
     
-    public void ShowJob()
+    
+    
+    
+    public void ShowJob(Job job)
     {
-        jobs = new ArrayList(sj.fetchJobData());
-        Trirate(jobs);
-        
+       // jobs = new ArrayList(sj.fetchJobData());
       vertContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
       contain = new Container(BoxLayout.y());
       
-      contain.add(new Label("There is no job available come back later"));
-        for(Job job : jobs)
-        {
-          if (job.getStatus().toUpperCase().equals("CONFIRMED".toUpperCase())){
-              src.addActionListener(e -> {
-                  if (search.getText().equals(job.getTitle()))
-                  srj.Show(job);  });
+    
+        
+         
+              src.addActionListener(e -> { });
               sliderContainer = new Container(BoxLayout.y()); 
                slider = createStarRankSlider();
               
@@ -137,11 +131,11 @@ public class Home {
             showMore = new Button("Show detail");
             apply = new Button("Apply");
             goComment = new Button("Comments");
-            showMore.addActionListener(e -> ShowMoreButton(job,job.getTitle(),"Location : "+job.getLocation()+"\n"+"Job Creation Date: "+job.getCreationDate()));
+            showMore.addActionListener(e -> ShowMoreButton(job,job.getTitle(),"Location :\n"+job.getLocation()+"\nJob Creation Date:\n"+job.getCreationDate()));
             apply.addActionListener(e -> apl.Show(job.getId()));
             JobTitleBorder(job.getTitle(),job.getId());
             craftContainer();
-            goComment.addActionListener(e -> { comm.Show(job); });
+            goComment.addActionListener(e -> comm.Show(job));
             contain.add(sliderContainer);
             contain.add(jobTitle);
             jobSalary = new Label("Salary :"+job.getSalary());
@@ -157,21 +151,12 @@ public class Home {
            // contain.setLeadComponent(jobTitle);
             vertContainer.add(contain);
             
-          }
-       
-        
-        }//End For loop;
+     
            vertContainer.setScrollableY(true);
          f.addComponent(BorderLayout.CENTER,vertContainer);
          
        
     }
-    
-    public void Trirate(List<Job> job) //doing some Magic
-    {
-        Collections.sort(job , new SortByRate());
-    }
-    
     
     public void JobTitleBorder(String text,int jobId)
     {
@@ -251,5 +236,7 @@ public class Home {
 
         return starRank;
     }
-   
 }
+
+
+

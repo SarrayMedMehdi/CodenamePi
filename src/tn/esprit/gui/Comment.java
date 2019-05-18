@@ -85,7 +85,7 @@ public class Comment {
  hi.add(FlowLayout.encloseCenter(feed));
  hi.add(FlowLayout.encloseCenterMiddle(submit));
  
-
+    hi.setScrollableY(true);
   hi.show();
   
   submit.addActionListener(new ActionListener() {
